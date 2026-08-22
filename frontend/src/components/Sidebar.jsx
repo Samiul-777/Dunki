@@ -5,7 +5,8 @@ const links = [
   { to: '/jobs', label: 'Job Search', icon: '⌕' },
   { to: '/documents', label: 'Documents', icon: '▤' },
   { to: '/payments', label: 'Payments', icon: '৳' },
-  { to: '/complaints', label: 'Complaints', icon: '!' }
+  { to: '/complaints', label: 'Complaints', icon: '!' },
+  { to: '/applications', label: 'Applications', icon: '✎' },
 ]
 
 export default function Sidebar() {
