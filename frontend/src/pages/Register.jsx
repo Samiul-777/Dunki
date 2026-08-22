@@ -10,28 +10,28 @@ const roles = [
 
 export default function Register() {
   const [role, setRole] = useState('worker')
-  const [name, setName] = useState('')
-  const [phone, setPhone] = useState('')
-  const [password, setPassword] = useState('')
+ const [name, setName] = useState('')
+const [email, setEmail] = useState('')
+const [phone, setPhone] = useState('')
+const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError('')
-    setLoading(true)
-    try {
-      await register({ name, phone, password, role })
-      navigate('/dashboard')
-    } catch (err) {
-      const messages = err.response?.data?.errors
-      setError(messages ? Object.values(messages).flat().join(' ') : 'Registration failed.')
-    } finally {
-      setLoading(false)
-    }
+ const handleSubmit = async (e) => {
+  e.preventDefault()
+  setError('')
+  setLoading(true)
+  try {
+    await register({ name, email, phone, password, role })
+    navigate('/dashboard')
+  } catch (err) {
+    const messages = err.response?.data?.errors
+    setError(messages ? Object.values(messages).flat().join(' ') : 'Registration failed.')
+  } finally {
+    setLoading(false)
   }
-
+}
   return (
     <div className="min-h-screen flex items-center justify-center bg-paper px-6 py-14">
       <div className="w-full max-w-md">
@@ -71,6 +71,17 @@ export default function Register() {
               className="rounded-card border border-navy/20 bg-white px-3.5 py-2.5 text-sm outline-none focus:border-stamp"
             />
           </label>
+          <label className="flex flex-col gap-1.5">
+  <span className="text-xs font-medium text-navy/70">Email</span>
+  <input
+    type="email"
+    required
+    value={email}
+    onChange={(e) => setEmail(e.target.value)}
+    placeholder="you@example.com"
+    className="rounded-card border border-navy/20 bg-white px-3.5 py-2.5 text-sm outline-none focus:border-stamp"
+  />
+</label>
           <label className="flex flex-col gap-1.5">
             <span className="text-xs font-medium text-navy/70">Phone number</span>
             <input
