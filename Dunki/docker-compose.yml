@@ -7,7 +7,7 @@ services:
       MYSQL_DATABASE: dunki
       MYSQL_ROOT_PASSWORD: 223344
     ports:
-      - "3307:3306"
+      - "3306:3306"
     volumes:
       - dunki-mysql-data:/var/lib/mysql
 

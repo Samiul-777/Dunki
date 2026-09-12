@@ -63,9 +63,8 @@ export default function Register() {
                 type="button"
                 key={r.key}
                 onClick={() => setRole(r.key)}
-                className={`text-left rounded-card border px-4 py-3 transition-colors ${
-                  role === r.key ? 'border-stamp bg-stamp/10' : 'border-navy/15 bg-white hover:border-navy/30'
-                }`}
+                className={`text-left rounded-card border px-4 py-3 transition-colors ${role === r.key ? 'border-stamp bg-stamp/10' : 'border-navy/15 bg-white hover:border-navy/30'
+                  }`}
               >
                 <p className="text-sm font-semibold text-navy">{r.label}</p>
                 <p className="text-xs text-navy/55 mt-0.5">{r.desc}</p>
