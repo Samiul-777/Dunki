@@ -1,0 +1,46 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: dunki-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: dunki
+      MYSQL_ROOT_PASSWORD: 223344
+    ports:
+      - "3307:3306"
+    volumes:
+      - dunki-mysql-data:/var/lib/mysql
+
+  backend:
+    build: ./backend
+    container_name: dunki-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/var/www
+    depends_on:
+      - mysql
+    environment:
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=dunki
+      - DB_USERNAME=root
+      - DB_PASSWORD=223344
+    command: >
+      sh -c "php artisan migrate --force &&
+             php artisan serve --host=0.0.0.0 --port=8000"
+
+  frontend:
+    build: ./frontend
+    container_name: dunki-frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+
+volumes:
+  dunki-mysql-data:
