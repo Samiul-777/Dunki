@@ -7,9 +7,14 @@ services:
       MYSQL_DATABASE: dunki
       MYSQL_ROOT_PASSWORD: 223344
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - dunki-mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p223344"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
 
   backend:
     build: ./backend
@@ -19,7 +24,8 @@ services:
     volumes:
       - ./backend:/var/www
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     environment:
       - DB_CONNECTION=mysql
       - DB_HOST=mysql
