@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 class RagAssistantService
 {
     protected MongoVectorService $mongoVectorService;
+    private ?array $lastGeminiDiagnostic = null;
 
     public function __construct(?MongoVectorService $mongoVectorService = null)
     {
@@ -94,6 +95,7 @@ class RagAssistantService
      */
     public function answer(string $query, ?User $user = null, array $history = []): array
     {
+        $this->lastGeminiDiagnostic = null;
         $trimmed = trim($query);
 
         $commonReply = $this->handleCommonQueries($trimmed, $user);
@@ -108,7 +110,7 @@ class RagAssistantService
         $userContext = $this->buildUserContext($user);
 
         // Step 3: Call Gemini — it is the SOLE answerer, not a supplement
-        $geminiKey = env('GEMINI_API_KEY') ?: env('GOOGLE_API_KEY');
+        $geminiKey = config('services.gemini.api_key');
 
         if ($geminiKey) {
             $aiReply = $this->callGemini($trimmed, $retrievedChunks, $userContext, $history, $geminiKey);
@@ -125,14 +127,23 @@ class RagAssistantService
                     'sources' => array_column($retrievedChunks, 'title'),
                 ];
             }
+        } else {
+            $this->lastGeminiDiagnostic = ['code' => 'GEMINI_KEY_MISSING'];
+            Log::warning('Gemini API key is not configured in Laravel services config.');
         }
 
         // Step 4: Gemini unavailable — graceful local fallback
-        return [
+        $result = [
             'reply' => $this->localFallback($trimmed, $retrievedChunks, $user),
             'is_out_of_domain' => false,
             'sources' => array_column($retrievedChunks, 'title'),
         ];
+
+        if ($this->lastGeminiDiagnostic && (config('app.debug') || ($user && $user->role === 'admin'))) {
+            $result['diagnostic'] = $this->lastGeminiDiagnostic;
+        }
+
+        return $result;
     }
 
     /**
@@ -253,6 +264,7 @@ class RagAssistantService
         string $apiKey
     ): ?string {
         if (empty($apiKey)) {
+            $this->lastGeminiDiagnostic = ['code' => 'GEMINI_KEY_MISSING'];
             return null;
         }
 
@@ -309,10 +321,12 @@ EOT;
             'parts' => [['text' => $query]],
         ];
 
-        // Retry across the commonly available Gemini model families.
-        // This avoids hard-failing when a newer model is unavailable for the current API key/account.
+        // Try the configured model first, then other current Flash models if it is unavailable.
         $models = array_values(array_unique([
-            env('GEMINI_GENERATION_MODEL', 'gemini-3.8-flash'),
+            config('services.gemini.generation_model', 'gemini-3.8-flash'),
+            'gemini-3.7-flash',
+            'gemini-3.6-flash',
+            'gemini-3.5-flash',
             'gemini-3.5-flash-lite',
         ]));
 
@@ -340,10 +354,27 @@ EOT;
                     if (!empty($text)) {
                         return trim($text);
                     }
+
+                    $this->lastGeminiDiagnostic = [
+                        'code' => 'GEMINI_EMPTY_RESPONSE',
+                        'model' => $model,
+                        'status' => $response->status(),
+                    ];
                 }
 
                 $status = $response->status();
-                Log::warning("Gemini model {$model} returned HTTP {$status}");
+                if (!$response->successful()) {
+                    $this->lastGeminiDiagnostic = [
+                        'code' => "GEMINI_HTTP_{$status}",
+                        'model' => $model,
+                        'status' => $status,
+                    ];
+                    Log::warning('Gemini generation request failed.', [
+                        'model' => $model,
+                        'status' => $status,
+                        'provider_status' => $response->json('error.status'),
+                    ]);
+                }
 
                 // Auth or model-access failures should stop retrying the same key set,
                 // but 404/unsupported-model responses can still be retried on the next model.
@@ -352,7 +383,14 @@ EOT;
                 }
 
             } catch (\Throwable $e) {
-                Log::info("Gemini model {$model} call failed: " . $e->getMessage());
+                $this->lastGeminiDiagnostic = [
+                    'code' => 'GEMINI_NETWORK_ERROR',
+                    'model' => $model,
+                ];
+                Log::warning('Gemini generation request could not be completed.', [
+                    'model' => $model,
+                    'exception' => get_class($e),
+                ]);
             }
         }
 
@@ -471,7 +509,7 @@ EOT;
         }
 
         $role = ucfirst($user->role ?? 'user');
-        if (!filter_var(env('GEMINI_SHARE_USER_CONTEXT', false), FILTER_VALIDATE_BOOL)) {
+        if (!filter_var(config('services.gemini.share_user_context', false), FILTER_VALIDATE_BOOL)) {
             return "The authenticated user has the {$role} role. Personal profile details are not available to the AI assistant.";
         }
 

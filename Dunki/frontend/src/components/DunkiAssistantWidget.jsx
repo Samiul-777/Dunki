@@ -158,6 +158,7 @@ export default function DunkiAssistantWidget() {
           content: response.reply,
           sources: response.sources || [],
           is_out_of_domain: response.is_out_of_domain || false,
+          diagnostic: response.diagnostic || null,
         },
       ])
     } catch {
@@ -289,6 +290,14 @@ export default function DunkiAssistantWidget() {
                       <p className="whitespace-pre-wrap">{m.content}</p>
                     ) : (
                       <div className="space-y-1">{renderMarkdown(m.content)}</div>
+                    )}
+
+                    {!isUser && m.diagnostic && (
+                      <div className="mt-2 border-t border-amber-300/60 pt-2 text-[10px] font-mono text-amber-800">
+                        AI diagnostic: {m.diagnostic.code}
+                        {m.diagnostic.model ? ` · ${m.diagnostic.model}` : ''}
+                        {m.diagnostic.status ? ` · HTTP ${m.diagnostic.status}` : ''}
+                      </div>
                     )}
 
                     {/* Sources Badge */}

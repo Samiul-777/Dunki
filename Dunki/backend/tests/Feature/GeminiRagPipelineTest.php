@@ -27,6 +27,16 @@ class GeminiRagPipelineTest extends TestCase
         putenv('GEMINI_SHARE_USER_CONTEXT=false');
         $_ENV['GEMINI_SHARE_USER_CONTEXT'] = 'false';
         $_SERVER['GEMINI_SHARE_USER_CONTEXT'] = 'false';
+        config([
+            'services.gemini.api_key' => 'test-gemini-key',
+            'services.gemini.generation_model' => 'gemini-3.8-flash',
+            'services.gemini.share_user_context' => false,
+            'services.mongodb.uri' => null,
+            'services.mongodb.database' => 'dunki_db',
+            'services.mongodb.collection' => 'dunki_knowledge_chunks',
+            'services.mongodb.vector_index' => 'vector_index',
+            'services.mongodb.embedding_model' => 'gemini-embedding-2-preview',
+        ]);
     }
 
     protected function tearDown(): void
@@ -69,7 +79,7 @@ class GeminiRagPipelineTest extends TestCase
         Http::assertSentCount(2);
         Http::assertSent(
             fn(Request $request) =>
-                str_contains($request->url(), '/models/gemini-embedding-2:embedContent')
+                str_contains($request->url(), '/models/gemini-embedding-2-preview:embedContent')
                 && !str_contains($request->url(), 'key=')
                 && $request->hasHeader('x-goog-api-key', 'test-gemini-key')
                 && $request->data()['outputDimensionality'] === 1536
@@ -123,11 +133,54 @@ class GeminiRagPipelineTest extends TestCase
         );
     }
 
+    public function test_rag_generation_tries_later_flash_models_when_earlier_models_are_unavailable(): void
+    {
+        Http::fake(function (Request $request) {
+            if (str_contains($request->url(), '/models/gemini-3.5-flash:generateContent')) {
+                return Http::response([
+                    'candidates' => [['content' => ['parts' => [['text' => 'Fallback model answer']]]]],
+                ]);
+            }
+
+            return Http::response(['error' => ['status' => 'UNAVAILABLE']], 503);
+        });
+
+        $vectorService = Mockery::mock(MongoVectorService::class);
+        $vectorService->shouldReceive('isConfigured')->andReturn(false);
+
+        $result = (new RagAssistantService($vectorService))->answer('Explain the worker migration journey');
+
+        $this->assertSame('Fallback model answer', $result['reply']);
+        Http::assertSentCount(4);
+    }
+
+    public function test_gemini_failure_diagnostic_is_available_to_admins_only(): void
+    {
+        config(['app.debug' => false]);
+        Http::fake([
+            'https://generativelanguage.googleapis.com/*' => Http::response([
+                'error' => ['status' => 'UNAVAILABLE'],
+            ], 503),
+        ]);
+
+        $vectorService = Mockery::mock(MongoVectorService::class);
+        $vectorService->shouldReceive('isConfigured')->andReturn(false);
+        $service = new RagAssistantService($vectorService);
+
+        $admin = new User(['name' => 'Admin', 'role' => 'admin']);
+        $adminResult = $service->answer('Explain payment records', $admin);
+
+        $this->assertSame(503, $adminResult['diagnostic']['status']);
+        $this->assertSame('GEMINI_HTTP_503', $adminResult['diagnostic']['code']);
+        $this->assertArrayNotHasKey('diagnostic', $service->answer('Explain payment records'));
+    }
+
     public function test_rag_profile_context_uses_the_normalized_destination_when_sharing_is_enabled(): void
     {
         putenv('GEMINI_SHARE_USER_CONTEXT=true');
         $_ENV['GEMINI_SHARE_USER_CONTEXT'] = 'true';
         $_SERVER['GEMINI_SHARE_USER_CONTEXT'] = 'true';
+        config(['services.gemini.share_user_context' => true]);
 
         Http::fake([
             'https://generativelanguage.googleapis.com/*' => Http::response([
