@@ -1,0 +1,33 @@
+# Local environment and secrets
+**/.env
+**/.env.*
+!**/.env.example
+/vps/
+*.pem
+
+# Installed dependencies
+**/node_modules/
+backend/vendor/
+
+# Generated frontend and Laravel assets
+frontend/dist/
+backend/public/build/
+backend/public/app/
+backend/public/storage/
+
+# Laravel runtime data
+backend/storage/app/**
+!backend/storage/app/**/.gitignore
+backend/storage/framework/**
+!backend/storage/framework/**/.gitignore
+backend/storage/logs/*.log
+backend/bootstrap/cache/*.php
+
+# Test and tool output
+**/.phpunit.result.cache
+coverage/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+*.log

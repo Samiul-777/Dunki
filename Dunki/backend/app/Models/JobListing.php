@@ -8,7 +8,7 @@ class JobListing extends Model
 {
     protected $table = 'jobs_listings';
 
-    // app/Models/JobListing.php
+    // app/Models/JobListing.php// app/Models/JobListing.php
     protected $fillable = [
         'creator_id',
         'title',
@@ -20,7 +20,6 @@ class JobListing extends Model
         'agency',
         'verified',
     ];
-
     protected function casts(): array
     {
         return ['verified' => 'boolean'];

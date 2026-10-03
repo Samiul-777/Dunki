@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Document;
 use App\Services\DocumentService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class DocumentController extends Controller
 {
     public function __construct(
         protected DocumentService $documentService
-    ) {}
+    ) {
+    }
 
     // READ — all documents belonging to the logged-in user
     public function index(Request $request)
@@ -21,9 +23,26 @@ class DocumentController extends Controller
     }
 
     // READ — one document
-    public function show(Document $document)
+    public function show(Request $request, Document $document)
     {
+        if ($document->user_id !== $request->user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
         return response()->json($document);
+    }
+
+    public function file(Request $request, Document $document)
+    {
+        if ($document->user_id !== $request->user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        if (!$document->file_path || !Storage::disk('public')->exists($document->file_path)) {
+            return response()->json(['message' => 'Document file not found.'], 404);
+        }
+
+        return response()->file(Storage::disk('public')->path($document->file_path));
     }
 
     // CREATE
@@ -50,6 +69,10 @@ class DocumentController extends Controller
     // UPDATE
     public function update(Request $request, Document $document)
     {
+        if ($document->user_id !== $request->user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
         $data = $request->validate([
             'name' => 'sometimes|string|max:255',
             'status' => 'sometimes|in:missing,complete',
@@ -61,8 +84,12 @@ class DocumentController extends Controller
     }
 
     // DELETE
-    public function destroy(Document $document)
+    public function destroy(Request $request, Document $document)
     {
+        if ($document->user_id !== $request->user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
         $this->documentService->deleteDocument($document);
 
         return response()->json(['message' => 'Document deleted']);

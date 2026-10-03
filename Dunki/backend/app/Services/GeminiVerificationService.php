@@ -48,28 +48,60 @@ class GeminiVerificationService
 
             $prompt = $this->buildPrompt($user);
 
-            $response = Http::timeout(25)->post(
-                "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={$apiKey}",
-                [
-                    'contents' => [
-                        [
-                            'parts' => [
-                                ['text' => $prompt],
-                                [
-                                    'inline_data' => [
-                                        'mime_type' => $mimeType,
-                                        'data' => $fileData,
+            $models = ['gemini-2.0-flash', 'gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-latest'];
+
+            foreach ($models as $model) {
+                $response = Http::timeout(25)->post(
+                    "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$apiKey}",
+                    [
+                        'contents' => [
+                            [
+                                'parts' => [
+                                    ['text' => $prompt],
+                                    [
+                                        'inline_data' => [
+                                            'mime_type' => $mimeType,
+                                            'data' => $fileData,
+                                        ],
                                     ],
                                 ],
                             ],
                         ],
-                    ],
-                    'generationConfig' => [
-                        'responseMimeType' => 'application/json',
-                        'temperature' => 0.2,
-                    ],
-                ]
-            );
+                        'generationConfig' => [
+                            'responseMimeType' => 'application/json',
+                            'temperature' => 0.2,
+                        ],
+                    ]
+                );
+
+                if ($response->successful()) {
+                    $content = $response->json('candidates.0.content.parts.0.text');
+                    if ($content) {
+                        $cleaned = trim($content);
+                        $cleaned = preg_replace('/^```json/i', '', $cleaned);
+                        $cleaned = preg_replace('/^```/', '', $cleaned);
+                        $cleaned = preg_replace('/```$/', '', $cleaned);
+                        $cleaned = trim($cleaned);
+
+                        $decoded = json_decode($cleaned, true);
+                        if (is_array($decoded) && isset($decoded['authentic'])) {
+                            return [
+                                'authentic' => (bool) $decoded['authentic'],
+                                'confidence' => $decoded['confidence'] ?? 'high',
+                                'document_type' => $decoded['document_type'] ?? ($user->role === 'agency' ? 'Agency License' : 'Identity Document'),
+                                'reason' => $decoded['reason'] ?? ($decoded['authentic'] ? 'Document passed automated verification checks.' : 'Document failed verification criteria.'),
+                                'detected_name' => $decoded['detected_name'] ?? $decoded['detected_agency'] ?? null,
+                                'id_preview' => $decoded['id_number_preview'] ?? $decoded['license_number_preview'] ?? null,
+                            ];
+                        }
+                    }
+                }
+
+                $status = $response->status();
+                if ($status === 401 || $status === 403) {
+                    break;
+                }
+            }
 
             if ($response->successful()) {
                 $content = $response->json('candidates.0.content.parts.0.text');
