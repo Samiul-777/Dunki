@@ -1,0 +1,83 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  DEPLOY_USER: s20230204083
+  DEPLOY_HOST: 187.52.122.100
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get the code
+        uses: actions/checkout@v4
+
+      - name: Use PHP 8.4, same as the server
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo, pdo_mysql, mbstring, xml, ctype, curl, bcmath
+
+      - name: Install PHP packages
+        working-directory: Dunki/backend
+        run: |
+          composer config platform-check false
+          composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction --ignore-platform-req=ext-mongodb
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: npm
+          cache-dependency-path: Dunki/frontend/package-lock.json
+
+      - name: Build the React app
+        working-directory: Dunki/frontend
+        run: |
+          npm ci
+          npm install --no-save @rollup/rollup-linux-x64-gnu@4.62.2
+          npm run build
+          test -f ../backend/public/app/index.html
+
+      - name: Pack the release
+        working-directory: Dunki/backend
+        run: |
+          tar -czf ../../release.tar.gz \
+            --exclude='./.git' --exclude='./node_modules' --exclude='./.env' --exclude='./.env.*' \
+            --exclude='./storage/logs/*' --exclude='./tests' --exclude='./Dockerfile' \
+            .
+          tar -tzf ../../release.tar.gz | grep -q '^./public/app/index.html$'
+          tar -tzf ../../release.tar.gz | grep -q '^./vendor/autoload.php$'
+          if tar -tzf ../../release.tar.gz | grep -E '(^|/)\.env$'; then echo ".env found in archive"; exit 1; fi
+
+      - name: Load the deploy key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
+
+      - name: Copy the release with scp
+        run: scp -i ~/.ssh/deploy_key release.tar.gz "$DEPLOY_USER@$DEPLOY_HOST:~/release.tar.gz"
+
+      - name: Deploy on the server
+        run: |
+          ssh -i ~/.ssh/deploy_key "$DEPLOY_USER@$DEPLOY_HOST" bash -s << 'ENDSSH'
+          set -euo pipefail
+          mkdir -p ~/laravel
+          tar -xzf ~/release.tar.gz -C ~/laravel
+          mkdir -p ~/laravel/storage/app/public ~/laravel/storage/framework/views ~/laravel/storage/framework/cache ~/laravel/storage/framework/sessions ~/laravel/storage/logs ~/laravel/bootstrap/cache
+          chmod -R u+rwX ~/laravel/storage ~/laravel/bootstrap/cache
+          setfacl -R -m u:www-data:rX -m d:u:www-data:rX ~/laravel/public
+          cd ~/laravel
+          test -f .env
+          php artisan migrate --force
+          php artisan optimize
+          if [ ! -e public/storage ]; then php artisan storage:link; fi
+          rm -f ~/release.tar.gz
+          ENDSSH

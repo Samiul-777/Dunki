@@ -31,3 +31,9 @@ coverage/
 .DS_Store
 Thumbs.db
 *.log
+
+# Deploy SSH keys
+/s20230204083
+/s20230204083.pub
+deploy_key*
+cse3100_deploy*
