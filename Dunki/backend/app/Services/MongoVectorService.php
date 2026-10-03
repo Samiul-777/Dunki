@@ -20,11 +20,11 @@ class MongoVectorService
 
     public function __construct()
     {
-        $this->uri = env('MONGODB_URI');
-        $this->database = env('MONGODB_DATABASE', 'dunki_db');
-        $this->collectionName = env('MONGODB_COLLECTION', 'dunki_knowledge_chunks');
-        $this->vectorIndex = env('MONGODB_VECTOR_INDEX', 'vector_index');
-        $this->embeddingModel = env('MONGODB_EMBEDDING_MODEL', 'gemini-embedding-2');
+        $this->uri = config('services.mongodb.uri');
+        $this->database = config('services.mongodb.database', 'dunki_db');
+        $this->collectionName = config('services.mongodb.collection', 'dunki_knowledge_chunks');
+        $this->vectorIndex = config('services.mongodb.vector_index', 'vector_index');
+        $this->embeddingModel = config('services.mongodb.embedding_model', 'gemini-embedding-2-preview');
     }
 
     /**
@@ -32,11 +32,6 @@ class MongoVectorService
      */
     public function isConfigured(): bool
     {
-        // The PHP mongodb extension is optional; without it, fall back to local knowledge.
-        if (!extension_loaded('mongodb')) {
-            return false;
-        }
-
         if (empty($this->uri)) {
             return false;
         }
@@ -63,7 +58,7 @@ class MongoVectorService
                 $this->client = new MongoClient($this->uri, [], [
                     'serverSelectionTimeoutMS' => 3000,
                 ]);
-            } catch (\Throwable $e) {
+            } catch (Exception $e) {
                 Log::warning('MongoDB Client initialization failed: ' . $e->getMessage());
                 return null;
             }
@@ -148,7 +143,7 @@ class MongoVectorService
      */
     public function generateEmbedding(string $text, bool $isQuery = false, ?string $title = null): ?array
     {
-        $apiKey = env('GEMINI_API_KEY') ?: env('GOOGLE_API_KEY');
+        $apiKey = config('services.gemini.api_key');
 
         if (empty($apiKey)) {
             return null;

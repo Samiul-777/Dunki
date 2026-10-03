@@ -162,7 +162,7 @@ export default function Applications() {
 
                   {app.document_path && (
                     <a
-                      href={`/storage/${app.document_path}`}
+                      href={`http://localhost:8000/storage/${app.document_path}`}
                       target="_blank"
                       rel="noreferrer"
                       className="text-xs text-navy underline underline-offset-2 mt-1 inline-block"

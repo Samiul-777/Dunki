@@ -35,4 +35,18 @@ return [
         ],
     ],
 
+    'gemini' => [
+        'api_key' => env('GEMINI_API_KEY') ?: env('GOOGLE_API_KEY'),
+        'generation_model' => env('GEMINI_GENERATION_MODEL', 'gemini-3.8-flash'),
+        'share_user_context' => env('GEMINI_SHARE_USER_CONTEXT', false),
+    ],
+
+    'mongodb' => [
+        'uri' => env('MONGODB_URI'),
+        'database' => env('MONGODB_DATABASE', 'dunki_db'),
+        'collection' => env('MONGODB_COLLECTION', 'dunki_knowledge_chunks'),
+        'vector_index' => env('MONGODB_VECTOR_INDEX', 'vector_index'),
+        'embedding_model' => env('MONGODB_EMBEDDING_MODEL', 'gemini-embedding-2-preview'),
+    ],
+
 ];
