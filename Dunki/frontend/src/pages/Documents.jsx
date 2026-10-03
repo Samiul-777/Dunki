@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import Sidebar from '../components/Sidebar.jsx'
 import StatusBadge from '../components/StatusBadge.jsx'
-import { fetchDocuments, createDocument, updateDocument, deleteDocument } from '../lib/api.js'
+import { fetchDocuments, fetchDocumentFile, createDocument, updateDocument, deleteDocument } from '../lib/api.js'
 
 export default function Documents() {
   const [documents, setDocuments] = useState([])
@@ -11,6 +11,7 @@ export default function Documents() {
   const [file, setFile] = useState(null)
   const [submitting, setSubmitting] = useState(false)
   const [previewDoc, setPreviewDoc] = useState(null)
+  const [openingDocumentId, setOpeningDocumentId] = useState(null)
   const fileInputRef = useRef(null)
 
   const load = () => {
@@ -23,14 +24,22 @@ export default function Documents() {
 
   useEffect(load, [])
 
-  const getFileUrl = (doc) => {
-    if (!doc) return null
-    if (doc.file_url) return doc.file_url
-    if (doc.file_path) {
-      if (doc.file_path.startsWith('http')) return doc.file_path
-      return `http://localhost:8000/storage/${doc.file_path}`
+  useEffect(() => () => {
+    if (previewDoc?.file_url) URL.revokeObjectURL(previewDoc.file_url)
+  }, [previewDoc])
+
+  const openPreview = async (document) => {
+    setError('')
+    setOpeningDocumentId(document.id)
+    try {
+      const file = await fetchDocumentFile(document.id)
+      const fileUrl = URL.createObjectURL(file)
+      setPreviewDoc({ ...document, file_url: fileUrl })
+    } catch (requestError) {
+      setError(requestError.response?.data?.message || 'Could not open this document.')
+    } finally {
+      setOpeningDocumentId(null)
     }
-    return null
   }
 
   const handleCreate = async (e) => {
@@ -158,7 +167,7 @@ export default function Documents() {
 
           <ul className="flex flex-col divide-y divide-navy/8">
             {documents.map((d) => {
-              const fileUrl = getFileUrl(d)
+              const hasFile = Boolean(d.file_path)
               const isPdf = d.file_path?.toLowerCase().endsWith('.pdf')
               const isVerification = d.type === 'verification'
 
@@ -174,31 +183,23 @@ export default function Documents() {
                         </span>
                       )}
 
-                      {fileUrl && (
+                      {hasFile && (
                         <span className="inline-flex items-center gap-1 text-[10px] font-mono px-1.5 py-0.5 rounded bg-navy/5 text-navy/70 border border-navy/10">
                           {isPdf ? 'PDF' : 'IMAGE'}
                         </span>
                       )}
                     </div>
 
-                    {fileUrl && (
+                    {hasFile && (
                       <div className="flex items-center gap-2 mt-0.5">
                         <button
                           type="button"
-                          onClick={() => setPreviewDoc(d)}
-                          className="inline-flex items-center gap-1 text-xs font-semibold text-stamp hover:text-stamp-dark underline underline-offset-2"
+                          onClick={() => openPreview(d)}
+                          disabled={openingDocumentId === d.id}
+                          className="inline-flex items-center gap-1 text-xs font-semibold text-stamp hover:text-stamp-dark underline underline-offset-2 disabled:opacity-60"
                         >
-                          📄 View {isPdf ? 'PDF' : 'File'}
+                          {openingDocumentId === d.id ? 'Opening…' : `View ${isPdf ? 'PDF' : 'File'}`}
                         </button>
-                        <span className="text-navy/30 text-xs">·</span>
-                        <a
-                          href={fileUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-xs text-navy/60 hover:text-navy hover:underline"
-                        >
-                          Open in new tab ↗
-                        </a>
                       </div>
                     )}
                   </div>
@@ -262,7 +263,7 @@ export default function Documents() {
               </div>
               <div className="flex items-center gap-2">
                 <a
-                  href={getFileUrl(previewDoc)}
+                  href={previewDoc.file_url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-3 py-1.5 rounded text-xs font-medium bg-navy text-paper hover:bg-navy-600 transition-colors"
@@ -284,13 +285,13 @@ export default function Documents() {
             <div className="flex-1 bg-navy/5 p-4 overflow-hidden flex items-center justify-center min-h-[450px]">
               {previewDoc.file_path?.toLowerCase().endsWith('.pdf') ? (
                 <iframe
-                  src={getFileUrl(previewDoc)}
+                  src={previewDoc.file_url}
                   title={previewDoc.name}
                   className="w-full h-[65vh] rounded-md border border-navy/10 bg-white"
                 />
               ) : (
                 <img
-                  src={getFileUrl(previewDoc)}
+                  src={previewDoc.file_url}
                   alt={previewDoc.name}
                   className="max-h-[65vh] max-w-full object-contain rounded-md shadow-sm"
                 />
@@ -301,7 +302,7 @@ export default function Documents() {
             <div className="px-6 py-3 border-t border-navy/10 bg-white flex items-center justify-between text-xs text-navy/60">
               <span>Dunki Document Verification Registry</span>
               <a
-                href={getFileUrl(previewDoc)}
+                href={previewDoc.file_url}
                 download
                 className="text-stamp font-semibold hover:underline"
               >

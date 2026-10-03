@@ -9,7 +9,8 @@ class VerificationController extends Controller
 {
     public function __construct(
         protected VerificationService $verificationService
-    ) {}
+    ) {
+    }
 
     /**
      * Upload identification or agency license document for AI verification.
@@ -34,6 +35,14 @@ class VerificationController extends Controller
      */
     public function bypass(Request $request)
     {
+        if (!in_array($request->user()->role, ['worker', 'agency'], true)) {
+            return response()->json(['message' => 'Only workers and agencies can bypass verification.'], 403);
+        }
+
+        if ($request->user()->verification_status === 'verified') {
+            return response()->json(['message' => 'This account is already verified.'], 409);
+        }
+
         $result = $this->verificationService->bypassVerification($request->user());
 
         return response()->json($result);

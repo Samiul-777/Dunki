@@ -88,46 +88,55 @@ class AIJobService
                 "Ensure salary has currency (e.g., '2,500 SAR / month', '3,500 AED / month', '250 KWD / month', etc.). " .
                 "Criteria must list required experience, trade skills, and migration requirements (passport, police clearance, medical certificate).";
 
-            $response = Http::timeout(12)->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={$apiKey}", [
-                'contents' => [
-                    [
-                        'parts' => [
-                            ['text' => $systemInstruction . "\n\nUser Prompt: " . $prompt],
+            $models = ['gemini-2.0-flash', 'gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-latest'];
+
+            foreach ($models as $model) {
+                $response = Http::timeout(12)->post("https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$apiKey}", [
+                    'contents' => [
+                        [
+                            'parts' => [
+                                ['text' => $systemInstruction . "\n\nUser Prompt: " . $prompt],
+                            ],
                         ],
                     ],
-                ],
-                'generationConfig' => [
-                    'responseMimeType' => 'application/json',
-                    'temperature' => 0.4,
-                ],
-            ]);
+                    'generationConfig' => [
+                        'responseMimeType' => 'application/json',
+                        'temperature' => 0.4,
+                    ],
+                ]);
 
-            if ($response->successful()) {
-                $content = $response->json('candidates.0.content.parts.0.text');
-                if ($content) {
-                    $cleaned = trim($content);
-                    $cleaned = preg_replace('/^```json/i', '', $cleaned);
-                    $cleaned = preg_replace('/^```/', '', $cleaned);
-                    $cleaned = preg_replace('/```$/', '', $cleaned);
-                    $cleaned = trim($cleaned);
+                if ($response->successful()) {
+                    $content = $response->json('candidates.0.content.parts.0.text');
+                    if ($content) {
+                        $cleaned = trim($content);
+                        $cleaned = preg_replace('/^```json/i', '', $cleaned);
+                        $cleaned = preg_replace('/^```/', '', $cleaned);
+                        $cleaned = preg_replace('/```$/', '', $cleaned);
+                        $cleaned = trim($cleaned);
 
-                    $decoded = json_decode($cleaned, true);
-                    if (is_array($decoded)) {
-                        if (isset($decoded['title'])) {
-                            $decoded = [$decoded];
+                        $decoded = json_decode($cleaned, true);
+                        if (is_array($decoded)) {
+                            if (isset($decoded['title'])) {
+                                $decoded = [$decoded];
+                            }
+                            return array_map(function ($item) use ($agencyName) {
+                                return [
+                                    'title' => $item['title'] ?? 'Overseas Position',
+                                    'description' => $item['description'] ?? 'Standard overseas recruitment position.',
+                                    'criteria' => $item['criteria'] ?? 'Valid passport, 2+ years experience, medical clearance.',
+                                    'country' => $item['country'] ?? 'Saudi Arabia',
+                                    'city' => $item['city'] ?? 'Riyadh',
+                                    'salary' => $item['salary'] ?? '2,200 SAR / month',
+                                    'agency' => $agencyName,
+                                ];
+                            }, $decoded);
                         }
-                        return array_map(function ($item) use ($agencyName) {
-                            return [
-                                'title' => $item['title'] ?? 'Overseas Position',
-                                'description' => $item['description'] ?? 'Standard overseas recruitment position.',
-                                'criteria' => $item['criteria'] ?? 'Valid passport, 2+ years experience, medical clearance.',
-                                'country' => $item['country'] ?? 'Saudi Arabia',
-                                'city' => $item['city'] ?? 'Riyadh',
-                                'salary' => $item['salary'] ?? '2,200 SAR / month',
-                                'agency' => $agencyName,
-                            ];
-                        }, $decoded);
                     }
+                }
+
+                $status = $response->status();
+                if ($status === 401 || $status === 403) {
+                    break;
                 }
             }
         } catch (\Throwable $e) {
@@ -298,15 +307,17 @@ class AIJobService
             $curr = $matchedDestination ? $matchedDestination['currency'] : 'SAR';
             $salary = $customSalary ?: "2,500 {$curr} / month";
 
-            return [[
-                'title' => $cleanTitle ?: 'Skilled Overseas Professional',
-                'description' => 'Recruiting qualified personnel for urgent overseas project deployment. Responsibilities include daily technical operations, safety adherence, and field execution according to project specifications.',
-                'criteria' => 'Minimum 2+ years verified industry experience, relevant technical certification or trade training, valid international passport with at least 12 months validity, clear police background record, and full medical fitness certification.',
-                'country' => $country,
-                'city' => $city,
-                'salary' => $salary,
-                'agency' => $agencyName,
-            ]];
+            return [
+                [
+                    'title' => $cleanTitle ?: 'Skilled Overseas Professional',
+                    'description' => 'Recruiting qualified personnel for urgent overseas project deployment. Responsibilities include daily technical operations, safety adherence, and field execution according to project specifications.',
+                    'criteria' => 'Minimum 2+ years verified industry experience, relevant technical certification or trade training, valid international passport with at least 12 months validity, clear police background record, and full medical fitness certification.',
+                    'country' => $country,
+                    'city' => $city,
+                    'salary' => $salary,
+                    'agency' => $agencyName,
+                ]
+            ];
         }
 
         $results = [];

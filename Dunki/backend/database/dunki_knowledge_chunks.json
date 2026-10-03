@@ -1,0 +1,842 @@
+[
+    {
+        "chunk_id": "dunki_dunki-platform_001",
+        "domain": "general",
+        "title": "Dunki Platform",
+        "text": "# Dunki Platform: Comprehensive Technical & Domain Knowledge Base\n**Target System:** MongoDB Atlas Vector Search / Vector Database Ingestion  \n**Embedding Target:** Dense Text Embeddings (OpenAI `text-embedding-3`, Google `text-embedding-004`, Voyage, Cohere, Nomic, BGE)  \n**Retrieval Strategy:** Hierarchical Markdown Chunking (`MarkdownHeaderTextSplitter`), Semantic Vector Search, Grounded RAG Generation  \n**Project Name:** Dunki (Overseas Migrant Worker Recruitment Registry & Protection Platform)  \n**Version:** 1.0.0 (Production / Monorepo Architecture)  \n\n---",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 56,
+            "keywords": [
+                "latform",
+                "ector",
+                "earch",
+                "omprehensive",
+                "echnical",
+                "omain",
+                "nowledge",
+                "ase\narget"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_mission-and-problem-space_002",
+        "domain": "general",
+        "title": "Mission and Problem Space",
+        "text": "## 1. Executive Summary & Platform Identity\n\n### Mission and Problem Space\nDunki is Bangladesh's official digital registry, legal verification, and welfare protection platform for overseas migrant workers. Its primary mission is the complete eradication of exploitative, undocumented migration routes (colloquially known as \"Dunki routes\"), predatory unauthorized sub-agents (\"dalals\"), visa fraud, wage theft, contract substitution, and illegal extortionate recruitment fees.\n\nIn Bangladesh, millions of workers seek employment in the Gulf Cooperation Council (GCC) countries (Saudi Arabia, UAE, Qatar, Oman, Kuwait, Bahrain) and Southeast Asia (Malaysia, Singapore). Historically, decentralized recruitment relying on unlicensed intermediaries has resulted in workers paying 3x to 10x the statutory government cost ceilings, arriving abroad on counterfeit visas, or finding their real job and salary downgraded upon arrival. \n\nDunki unifies all stakeholders—Migrant Workers, Licensed Recruiting Agencies, Employers, the Bureau of Manpower, Employment and Training (BMET), the Wage Earners' Welfare Board (WEWB), and Ministry of Expatriates' Welfare and Overseas Employment—into a single transparent, tamper-evident digital registry.",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 156,
+            "keywords": [
+                "workers",
+                "ission",
+                "roblem",
+                "digital",
+                "registry",
+                "routes",
+                "recruitment",
+                "elfare"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_unique-tracking-identity-trac_003",
+        "domain": "general",
+        "title": "Unique Tracking Identity (Tracking ID)",
+        "text": "### Unique Tracking Identity (Tracking ID)\nEvery registered migrant worker receives an unalterable government tracking identifier formatted as `DNK-YYYY-XXXXXX` (for example, `DNK-2026-004821`). This tracking identifier is permanently bound to:\n- The worker's National Identity Card (NID) and Machine Readable Passport (MRP) or E-Passport.\n- Biometric clearance and GAMCA medical fitness reports.\n- Verified digital employment contracts issued by authorized agencies.\n- Real-time payment records logged via the official SSLCommerz payment gateway.\n- Formal grievance and complaint escalation tickets submitted to the BMET Vigilance Cell.\n\n```\n[Migrant Worker] <──> [Tracking ID: DNK-2026-XXXXXX] <──> [BMET Clearance & Smart Card]\n       │                           │                                │\n       ▼                           ▼                                ▼\n[Document Vault]        [Recruitment Cost Ledger]        [Digital Contract Registry]\n(GAMCA, NID, Passport)  (SSLCommerz / Legal Caps)       (No Contract Substitution)\n```\n\n---",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 112,
+            "keywords": [
+                "racking",
+                "dentity",
+                "nique",
+                "tracking",
+                "identifier",
+                "assport",
+                "payment",
+                "ommerz"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_backend-stack_004",
+        "domain": "general",
+        "title": "Backend Stack",
+        "text": "## 2. Monorepo Architecture & Technology Stack\n\nThe platform is engineered as a modern, high-performance monorepo supporting web, mobile-responsive browsers, and automated microservices:\n\n### Backend Stack\n- **Framework:** Laravel 12 REST API (PHP 8.4)\n- **Authentication:** Laravel Sanctum (Stateful session tokens & Bearer token authorization)\n- **Database:** MySQL 8.0+ relational database with foreign key constraints, indexed tracking fields, and transaction atomicity\n- **Payment Processing:** Official SSLCommerz Payment Gateway SDK & HTTP client integration with sandbox/live switching, automated IPN (Instant Payment Notification) verification, and webhook callbacks\n- **AI & Computer Vision Services:**\n  - Google Gemini 1.5 Flash / 2.5 Flash API for automated document verification (NID, Passport, GAMCA medical clearance)\n  - Natural Language AI Job Circular Parser for recruitment agencies\n  - Guardrailed Retrieval-Augmented Generation (RAG) assistant service with deterministic fallback synthesis\n- **Storage:** Laravel Public and Secure Storage disks for document uploads, receipts, and verification certificates",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 133,
+            "keywords": [
+                "automated",
+                "aravel",
+                "ayment",
+                "verification",
+                "ackend",
+                "document",
+                "torage",
+                "onorepo"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_frontend-stack_005",
+        "domain": "general",
+        "title": "Frontend Stack",
+        "text": "### Frontend Stack\n- **Framework:** React 18 Single Page Application (SPA)\n- **Build Tool:** Vite 6 with ultra-fast Hot Module Replacement (HMR)\n- **Styling System:** Vanilla CSS + Tailwind CSS 3 tailored with official registry passport-style visual design tokens:\n  - Deep Navy / Midnight Blue (`#0f172a`, `#1e293b`) representing governmental authority\n  - Passport Stamp Gold / Amber (`#d97706`, `#b45309`) representing security seals and clearances\n  - Archival Paper / Ivory (`#f8fafc`, `#f1f5f9`) for official certificates and ledgers\n- **State Management & Networking:** Axios with central request/response interceptors, reactive session storage, and dynamic role routing\n- **Components:** Modular widget ecosystem (`DunkiAssistantWidget`, `JourneyStrip`, `StatusBadge`, `JobDetailModal`, `AIJobAssistantModal`)",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 99,
+            "keywords": [
+                "rontend",
+                "official",
+                "representing",
+                "tack\n",
+                "ramework",
+                "ingle",
+                "pplication",
+                "ultrafast"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_monorepo-directory-hierarchy_006",
+        "domain": "general",
+        "title": "Monorepo Directory Hierarchy",
+        "text": "### Monorepo Directory Hierarchy\n```\nDunki/\n├── package.json                   # Root orchestrator scripts (concurrent execution, migration wrappers)\n├── docker-compose.yml             # Containerized services (MySQL, Laravel Backend, Vite Frontend)\n├── backend/                       # Laravel 12 API service\n│   ├── app/\n│   │   ├── Http/Controllers/      # PaymentController, ContractController, AssistantController, etc.\n│   │   ├── Models/                # User, Contract, Document, Payment, Complaint, JobListing, etc.\n│   │   └── Services/              # RagAssistantService, SSLCommerzService, GeminiVerificationService, AIJobService\n│   ├── database/migrations/       # Database schemas for users, contracts, ledgers, complaints\n│   └── routes/api.php             # Public and protected REST endpoints\n└── frontend/                      # React 18 SPA\n    ├── src/\n    │   ├── components/            # UI building blocks and DunkiAssistantWidget\n    │   ├── pages/                 # WorkerDashboard, Payments, Complaints, Contracts, Documents, JobSearch\n    │   └── lib/api.js             # Centralized API service client\n```\n\n---",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 88,
+            "keywords": [
+                "onorepo",
+                "irectory",
+                "aravel",
+                "ierarchy",
+                "ierarchy\n\nunki\n",
+                "packagejson",
+                "orchestrator",
+                "scripts"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_user-roles-access-control-s_007",
+        "domain": "general",
+        "title": "User Roles, Access Control & Security Policies",
+        "text": "## 3. User Roles, Access Control & Security Policies\n\nDunki enforces strict Role-Based Access Control (RBAC) across four primary platform roles:\n\n| Role Name | Access Level | Core Capabilities & Permissions | Strict Prohibitions |\n| :--- | :--- | :--- | :--- |\n| **Worker (`worker`)** | Primary End-User | • View assigned contracts and terms.<br>• Pay migration fees via SSLCommerz.<br>• Upload & verify 5 mandatory documents.<br>• File grievances and complaints.<br>• Search certified circulars and apply directly. | **CANNOT** create, draft, or issue contracts.<br>**CANNOT** publish job circulars.<br>**CANNOT** clear their own background checks. |\n| **Recruiting Agency (`agency`)** | Accredited Entity | • Create and publish overseas job circulars.<br>• Review worker applications and shortlist candidates.<br>• Issue legally binding digital contracts to verified workers.<br>• Use AI Job Assistant to parse natural language job postings. | **CANNOT** exceed BMET statutory cost ceilings.<br>**CANNOT** alter contract terms post-issuance.<br>**CANNOT** confiscate worker credentials. |\n| **Nominee / Family (`nominee`)** | Dependent Observer | • View real-time migration stage of their family member.<br>• Access emergency embassy contact points.<br>• View payment ledger to prevent extortion from local dalals. | **CANNOT** modify worker records or upload documents without worker delegation. |\n| **Admin / Inspector (`admin`)** | Government Oversight | • Inspect compliance across all registered agencies.<br>• Investigate BMET Vigilance Cell complaint escalations.<br>• Revoke or suspend agency recruitment privileges. | Subject to administrative audit logging and dual-custody verification. |",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 208,
+            "keywords": [
+                "ccess",
+                "worker",
+                "ontrol",
+                "ecurity",
+                "across",
+                "contracts",
+                "migration",
+                "publish"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_authentication-token-workflo_008",
+        "domain": "general",
+        "title": "Authentication & Token Workflow",
+        "text": "### Authentication & Token Workflow\n- **Registration (`POST /api/register`):** Workers supply name, email, phone number, password, role, and optional destination. The system provisions a unique `tracking_id` and initial verification status of `pending`.\n- **Login (`POST /api/login`):** Validates credentials and returns a Bearer Token via Laravel Sanctum.\n- **Identity Resolver (`GET /api/me`):** Hydrates frontend application state with profile details, permissions, destination, and active verification status.\n\n---",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 67,
+            "keywords": [
+                "uthentication",
+                "destination",
+                "verification",
+                "orkflow",
+                "orkflow\n",
+                "egistration",
+                "apiregister",
+                "orkers"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_the-6-stage-dynamic-worker-mig_009",
+        "domain": "journey",
+        "title": "The 6-Stage Dynamic Worker Migration Journey Engine",
+        "text": "## 4. The 6-Stage Dynamic Worker Migration Journey Engine\n\nA central innovation of Dunki is the **Dynamic Worker Journey Engine**, visible on the Worker Dashboard (`JourneyStrip`). Rather than a static checklist, the system computes the worker's real-time legal status directly from the underlying database state:\n\n```\n[ Stage 1: Applied ]\n        │  (Trigger: Job application submitted to certified agency)\n        ▼\n[ Stage 2: Agency Review ]\n        │  (Trigger: Agency accepts application or drafts contract)\n        ▼\n[ Stage 3: Contract Verified ]\n        │  (Trigger: Official agency issues contract; validated by BMET)\n        ▼\n[ Stage 4: Medical Fitness ]\n        │  (Trigger: GAMCA accredited medical report uploaded and verified)\n        ▼\n[ Stage 5: Visa Issuance ]\n        │  (Trigger: Official employment visa stamped and stored in vault)\n        ▼\n[ Stage 6: Travel & Smart Card ]\n           (Trigger: BMET Smart Card issued & flight ticket registered)\n```",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 108,
+            "keywords": [
+                "rigger",
+                "orker",
+                "ynamic",
+                "ourney",
+                "6tage",
+                "igration",
+                "ngine",
+                "application"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_stage-transitions-validation_010",
+        "domain": "journey",
+        "title": "Stage Transitions & Validation Rules",
+        "text": "### Stage Transitions & Validation Rules\n1. **Stage 1 (Applied):** Transitions from `current` to `done` as soon as the worker registers at least one active application (`JobApplication`) for a verified job.\n2. **Stage 2 (Agency Review):** Turns `done` when the agency marks the application status as `accepted` or moves the applicant into contract drafting.\n3. **Stage 3 (Contract Verified):** Crucial gatekeeper stage. Marked `done` only when a formal contract (`Contract`) exists for the worker with `status = 'verified'`.\n4. **Stage 4 (Medical):** Unlocked only after Contract verification. Requires a GAMCA medical fitness certificate in the Document Vault with `status = 'complete'` or `status = 'verified'`.\n5. **Stage 5 (Visa):** Marked `done` once the bilateral employment visa document is confirmed and uploaded.\n6. **Stage 6 (Travel):** Final stage before departure. Unlocks pre-departure briefing completion, BMET Smart Card distribution, and boarding readiness.\n\n---",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 124,
+            "keywords": [
+                "status",
+                "ransitions",
+                "ontract",
+                "alidation",
+                "worker",
+                "application",
+                "contract",
+                "stage"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_strict-policy-why-migrant-wor_011",
+        "domain": "contracts",
+        "title": "Strict Policy: Why Migrant Workers Cannot Create Contracts",
+        "text": "## 5. Contract Management & Strict Legal Policies\n\n### Strict Policy: Why Migrant Workers Cannot Create Contracts\nOn Dunki, **migrant workers are strictly prohibited from creating or uploading contracts**. Under Bangladesh migration law and BMET regulations:\n- Contracts are bilateral legal agreements between an overseas employer (or accredited recruiting agency) and the employee.\n- Permitting workers to create contracts opens massive vulnerabilities for forgery, fake visa endorsements, and sub-agent exploitation.\n- Only registered agencies with valid RL (Recruiting License) credentials can issue contracts.",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 79,
+            "keywords": [
+                "trict",
+                "contracts",
+                "olicy",
+                "igrant",
+                "orkers",
+                "annot",
+                "reate",
+                "ontracts"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_what-migrant-workers-can-do-wi_012",
+        "domain": "contracts",
+        "title": "What Migrant Workers CAN Do with Contracts",
+        "text": "### What Migrant Workers CAN Do with Contracts\n1. **Inspect Full Contract Terms:** Workers can review the exact salary denominated in destination currency (e.g., Saudi Riyals `SAR`, UAE Dirham `AED`, Malaysian Ringgit `MYR`), basic hours, overtime multipliers, food allowances, and accommodation.\n2. **Verify BMET Certification:** Check if the contract has been registered with BMET or is still pending validation.\n3. **Contract Discrepancy Redressal:** If an agency promises a salary or job role verbally that differs from the digital contract, or attempts to substitute the contract at the airport or destination country, workers click **\"Report Discrepancy\"**. This generates an automatic high-priority complaint under the category of **Contract Substitution**.",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 104,
+            "keywords": [
+                "orkers",
+                "ontract",
+                "contract",
+                "igrant",
+                "salary",
+                "destination",
+                "iscrepancy",
+                "ontracts"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_mandatory-bmet-statutory-claus_013",
+        "domain": "contracts",
+        "title": "Mandatory BMET Statutory Clauses in Every Contract",
+        "text": "### Mandatory BMET Statutory Clauses in Every Contract\nEvery legal overseas contract on Dunki must stipulate:\n- **Maximum Working Hours:** 8 hours per day, 48 hours per week standard.\n- **Overtime Pay:** Minimum 1.5x basic hourly wage for all additional hours worked.\n- **Lodging & Medical Care:** Free bachelor accommodation and comprehensive health insurance covered 100% by the employer.\n- **Repatriation Guarantee:** Round-trip flight tickets provided by the employer upon completion of the contractual term, or paid emergency repatriation in case of contract violation.\n- **Annual Leave:** Minimum 30 days paid leave every two years of continuous service.\n\n---",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 93,
+            "keywords": [
+                "hours",
+                "andatory",
+                "tatutory",
+                "lauses",
+                "contract",
+                "inimum",
+                "ontract",
+                "ontract\nvery"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_official-bmet-statutory-cost-c_014",
+        "domain": "payments",
+        "title": "Official BMET Statutory Cost Ceilings",
+        "text": "## 6. Financial Ledger, Legal Cost Caps & SSLCommerz Integration\n\n### Official BMET Statutory Cost Ceilings\nUnder Section 31 of the *Overseas Employment and Migrants Act 2013*, the Government of Bangladesh mandates strict legal maximum ceilings on total recruitment expenses:\n\n| Destination Country | Statutory BMET Ceiling (BDT ৳) | Regulated Components Covered |\n| :--- | :--- | :--- |\n| **Malaysia** | **৳ 78,990** | Processing, airfare, medical, BMET welfare fee |\n| **Qatar** | **৳ 1,00,000** | Visa processing, insurance, orientation, Smart Card |\n| **Oman** | **৳ 1,00,500** | Embassy attestation, medical test, immigration fee |\n| **Kuwait** | **৳ 1,06,500** | Trade test, GAMCA clearance, pre-departure training |\n| **United Arab Emirates (UAE)** | **৳ 1,07,700** | Ministry entry permit, airfare, agency service charge |\n| **Saudi Arabia (KSA)** | **৳ 1,65,000** | Enjaz fee, biometric clearance, flight, BMET card |\n| **Singapore** | **৳ 2,62,000** | BCA skills certification, training center fees, levies |\n| **Other / General Destinations** | **৳ 1,50,000** | Standard statutory default ceiling |",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 110,
+            "keywords": [
+                "tatutory",
+                "fficial",
+                "airfare",
+                "medical",
+                "clearance",
+                "training",
+                "eilings",
+                "inancial"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_real-time-overcharge-protectio_015",
+        "domain": "payments",
+        "title": "Real-Time Overcharge Protection Engine",
+        "text": "### Real-Time Overcharge Protection Engine\nThe Dunki **Recruitment Cost Ledger** aggregates every payment made by a worker across all channels:\n$$\\text{Total Paid} = \\sum \\text{Payment amounts}$$\n$$\\text{Overcharge Flag} = \\begin{cases} \\text{Active (Fee Overcharge Detected)}, & \\text{if } \\text{Total Paid} > \\text{Destination Ceiling} \\\\ \\text{Compliant}, & \\text{otherwise} \\end{cases}$$\n\nWhen an overcharge is detected:\n- The user dashboard displays an alert warning of unlawful fees.\n- A one-click pre-filled grievance can be escalated directly to the BMET Vigilance Cell.\n- Demanding fees above these statutory ceilings is a non-bailable offense punishable by imprisonment and immediate revocation of the recruiting agency's license.",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 102,
+            "keywords": [
+                "vercharge",
+                "ealime",
+                "rotection",
+                "ngine",
+                "ngine\nhe",
+                "ecruitment",
+                "edger",
+                "aggregates"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_sslcommerz-payment-gateway-arc_016",
+        "domain": "payments",
+        "title": "SSLCommerz Payment Gateway Architecture",
+        "text": "### SSLCommerz Payment Gateway Architecture\nDunki features end-to-end integration with **SSLCommerz**, Bangladesh's premier payment gateway:\n- **Payment Methods Supported:** bKash, Nagad, Rocket, Upay, Visa, Mastercard, AMEX, and direct internet banking (Citytouch, Islami Bank, etc.).\n- **Transaction Identification:** Every session generates an unforgeable transaction token: `DNK-SSL-XXXXXXXXXX`.\n- **IPN (Instant Payment Notification):** Server-to-server webhook verification ensures ledger updates occur even if the user closes the browser during redirect.\n- **Physical Deposit Tracking:** For bank counter deposits, workers can manually record transaction details and upload paper receipts to ensure complete legal traceability.\n\n---",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 89,
+            "keywords": [
+                "ayment",
+                "ommerz",
+                "ateway",
+                "transaction",
+                "rchitecture",
+                "rchitecture\nunki",
+                "features",
+                "endtoend"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_document-vault-verification_017",
+        "domain": "documents",
+        "title": "Document Vault, Verification & Gemini AI Vision",
+        "text": "## 7. Document Vault, Verification & Gemini AI Vision\n\nTo prevent fraudulent clearances and forged visas, the **Document Vault** tracks five mandatory clearance documents required by the Government of Bangladesh prior to departure:\n\n```\n[ Mandatory Document Checklist ]\n├── 1. National ID Card (NID)             -> Verified identity against national database\n├── 2. Machine Readable / E-Passport       -> Minimum 12 months validity required\n├── 3. GAMCA Medical Fitness Certificate  -> Approved diagnostic center clearance\n├── 4. BMET 3-Day Training Certificate     -> Pre-departure orientation & BMET Smart Card\n└── 5. Police Clearance Certificate        -> Criminal record check (valid within 6 months)\n```",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 80,
+            "keywords": [
+                "ocument",
+                "ertificate",
+                "erification",
+                "emini",
+                "ision",
+                "ision\n\no",
+                "prevent",
+                "fraudulent"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_ai-powered-document-verificati_018",
+        "domain": "documents",
+        "title": "AI-Powered Document Verification (Gemini Vision)",
+        "text": "### AI-Powered Document Verification (Gemini Vision)\nDunki integrates **Google Gemini 1.5 Flash Multimodal Vision** (`GeminiVerificationService`):\n1. **Ingestion:** Worker uploads a scanned JPG, PNG, or PDF of their document.\n2. **Analysis:** The service inspects the image for official government watermarks, seal patterns, dates, name matches against user profile, and validity periods.\n3. **Assessment Output:** Returns authenticity flag, confidence rating (`high`, `medium`, `low`), detected document type, and extraction details.\n4. **Resilience & Bypass:** If the vision API is unreachable or during sandbox testing, an intelligent heuristic fallback inspection ensures platform operations remain uninterrupted.\n\n---",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 85,
+            "keywords": [
+                "emini",
+                "owered",
+                "ocument",
+                "erification",
+                "ision",
+                "ision\nunki",
+                "integrates",
+                "oogle"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_grievance-categories_019",
+        "domain": "complaints",
+        "title": "Grievance Categories",
+        "text": "## 8. Grievances, Complaints & BMET Vigilance Cell Escalation\n\nDunki provides an unassailable legal channel for workers and their families to report exploitation without fear of retaliation:\n\n### Grievance Categories\n1. **Fee Overcharging / Extortion:** Agency or broker demanding payments above BMET statutory caps.\n2. **Visa Fraud / Bogus Permits:** Fake visas, non-existent employers, or counterfeit entry clearances.\n3. **Contract Substitution:** Salary, job designation, or living conditions altered upon arrival abroad.\n4. **Document / Passport Confiscation:** Unlawful withholding of original travel documents by agents.\n5. **Wage Theft / Unpaid Compensation:** Non-payment of basic wages, overtime, or promised allowances.\n6. **Physical / Verbal Abuse & Danger:** Exploitative working environments or hazardous conditions.\n7. **Stranded Worker Emergency:** Immediate distress requiring embassy rescue and repatriation.",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 105,
+            "keywords": [
+                "rievance",
+                "ategories",
+                "rievances",
+                "omplaints",
+                "igilance",
+                "scalation\n\nunki",
+                "provides",
+                "unassailable"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_escalation-workflow_020",
+        "domain": "complaints",
+        "title": "Escalation Workflow",
+        "text": "### Escalation Workflow\n- **Tracking Reference:** Every grievance receives a formal complaint code (e.g., `CMP-2026-00128`).\n- **Ministry Escalation:** Workers click **\"Escalate to BMET\"** to transmit the dossier directly to the BMET Vigilance Cell and Ministry of Expatriates' Welfare.\n- **Consequences for Agencies:** Unresolved complaints trigger agency show-cause notices, freezing of security deposits, and blacklisting.\n\n---",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 56,
+            "keywords": [
+                "scalation",
+                "inistry",
+                "orkflow",
+                "orkflow\n",
+                "racking",
+                "eference",
+                "grievance",
+                "receives"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_certified-job-circulars-ai-j_021",
+        "domain": "jobs",
+        "title": "Certified Job Circulars & AI Job Assistant",
+        "text": "## 9. Certified Job Circulars & AI Job Assistant\n\nTo ensure migrant workers are protected from fake recruitment advertisements, Dunki operates a verified job circular marketplace:\n- **Verified Agency Tag:** Only licensed recruiting agencies with verified credentials can publish circulars.\n- **Salary Transparency:** Every job posting must declare the exact monthly wage, target country, trade criteria, and employer accommodation benefits.\n- **Direct Application:** Registered workers can apply directly with their Dunki Tracking ID, eliminating intermediary commissions.",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 73,
+            "keywords": [
+                "ertified",
+                "irculars",
+                "workers",
+                "verified",
+                "ssistant",
+                "ssistant\n\no",
+                "ensure",
+                "migrant"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_agency-ai-job-assistant-aijo_022",
+        "domain": "jobs",
+        "title": "Agency AI Job Assistant (`AIJobService`)",
+        "text": "### Agency AI Job Assistant (`AIJobService`)\nRecruiting agencies can upload raw recruitment circulars or unstructured text prompts (e.g., *\"Hiring 20 steel fixers for Riyadh, salary 1600 SAR plus food, 2 years contract\"*):\n- **Autonomous Parsing:** Extracts job title, destination country, city, salary in foreign currency, criteria, and duration.\n- **Draft or Auto-Post:** Agencies can preview structured drafts or publish them immediately to the registry.\n\n---",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 62,
+            "keywords": [
+                "gency",
+                "ssistant",
+                "salary",
+                "obervice",
+                "obervice\necruiting",
+                "agencies",
+                "upload",
+                "recruitment"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_live-interactive-ai-assistant_023",
+        "domain": "general",
+        "title": "Live Interactive AI Assistant & RAG Architecture",
+        "text": "## 10. Live Interactive AI Assistant & RAG Architecture\n\nThe platform features an intelligent, guardrailed Retrieval-Augmented Generation (RAG) assistant (`DunkiAssistantWidget` & `RagAssistantService`) designed to provide instant legal guidance to workers and agencies.\n\n```\n       [ User Query ]\n             │\n             ▼\n   [ Domain Guardrail Check ]\n   (Rejects cooking, sports, code, trivia)\n             │\n      ┌──────┴──────┐\n      ▼             ▼\n[Out of Scope]  [In Scope]\n      │             │\n  (Polite           ├─► Retrieve Grounded Chunks (TF-IDF / Vector Search)\n  Refusal)          ├─► Hydrate Real-Time User Context (Tracking ID, Payments)\n                    ├─► Prompt Gemini 2.5 / 1.5 Flash with Strict System Grounding\n                    └─► Fallback to Deterministic Grounded Synthesis Engine\n```",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 71,
+            "keywords": [
+                "nteractive",
+                "ssistant",
+                "rounded",
+                "rchitecture",
+                "rchitecture\n\nhe",
+                "platform",
+                "features",
+                "intelligent"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_contextual-personalization_024",
+        "domain": "general",
+        "title": "Contextual Personalization",
+        "text": "### Strict Domain Guardrails\nThe assistant contains built-in domain classifiers (`isWithinDomain`). It is strictly programmed to decline non-migration topics (e.g., cooking recipes, sports results, general coding, entertainment) with an official standardized disclaimer:\n> *\"I am Dunki's official Overseas Worker Protection Assistant. I can only answer questions strictly regarding the Dunki platform, overseas migration procedures, recruitment costs, contracts, complaints, BMET regulations, and worker welfare.\"*\n\n### Contextual Personalization\nWhen a logged-in user interacts with the assistant, the engine dynamically injects their active migration state:\n- Worker Tracking ID and Destination Country\n- Total payments recorded vs. the destination's statutory legal cap\n- Number of active contracts and document completion percentage\n- Active grievance tickets and status\n\n---",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 113,
+            "keywords": [
+                "ontextual",
+                "assistant",
+                "strictly",
+                "official",
+                "orker",
+                "migration",
+                "contracts",
+                "active"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_emergency-hotlines-embassy-l_025",
+        "domain": "emergency",
+        "title": "Emergency Hotlines & Embassy Labor Wings",
+        "text": "## 11. Emergency Hotlines & Embassy Labor Wings\n\nFor emergency assistance, stranded workers, or families in distress, Dunki maintains verified direct hotlines:\n\n| Organization / Mission | Contact Number / Hotline | Hours & Service |\n| :--- | :--- | :--- |\n| **BMET 24/7 Expatriate Helpline** | **`13355`** or **`+880-2-8300300`** | 24/7 Toll-Free Migration Assistance |\n| **Wage Earners' Welfare Board (WEWB)** | **`16135`** | Worker Insurance & Welfare Inquiries |\n| **Prabashi Kallyan Desk (Airport)** | **`+880-2-8901460`** | Hazrat Shahjalal International Airport Desk |\n| **Bangladesh Embassy Riyadh (Labor Wing)** | **`+966-11-4195300`** | Emergency Assistance across Central Saudi Arabia |\n| **Bangladesh Consulate General Jeddah** | **`+966-12-6878465`** | Western Province & Hajj Region Support |\n| **Bangladesh Embassy Abu Dhabi** | **`+971-2-4465100`** | UAE Federal Labor Wing |\n| **Bangladesh Consulate General Dubai** | **`+971-4-2252484`** | Dubai & Northern Emirates Support |\n| **Bangladesh Embassy Doha, Qatar** | **`+974-44671988`** | Labor Dispute & Repatriation Desk |\n| **Bangladesh High Commission Kuala Lumpur** | **`+60-3-26919255`** | Malaysia Labor & Special Pass Inquiries |\n\n---",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 124,
+            "keywords": [
+                "angladesh",
+                "mbassy",
+                "mergency",
+                "otlines",
+                "ssistance",
+                "elfare",
+                "nquiries",
+                "irport"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_1-users-table_026",
+        "domain": "schema",
+        "title": "1. `users` Table",
+        "text": "## 12. Database Schema & Data Models Specification\n\n### 1. `users` Table\nStores worker, agency, nominee, and administrative accounts:\n- `id` (bigint, primary key)\n- `name` (string): Full legal name as per NID / Passport\n- `email` (string, unique): Login email address\n- `role` (enum: `worker`, `agency`, `nominee`, `admin`): RBAC role\n- `tracking_id` (string, unique, nullable): Unique migration code (e.g. `DNK-2026-004821`)\n- `destination` (string, nullable): Destination country (e.g. `Saudi Arabia`, `Malaysia`)\n- `phone` (string, nullable): Mobile contact number\n- `agency` (string, nullable): Associated agency name\n- `verification_status` (enum: `pending`, `verified`, `rejected`)\n- `verification_document_path` (string, nullable): Scanned NID/Passport storage path",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 101,
+            "keywords": [
+                "string",
+                "nullable",
+                "agency",
+                "users",
+                "worker",
+                "nominee",
+                "email",
+                "unique"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_2-contracts-table_027",
+        "domain": "schema",
+        "title": "2. `contracts` Table",
+        "text": "### 2. `contracts` Table\nStores legally binding employment agreements:\n- `id` (bigint, primary key)\n- `user_id` (foreign key -> `users.id`): Assigned migrant worker\n- `agency_name` (string): Sponsoring recruiting agency\n- `job_title` (string): Official employment designation\n- `destination_country` (string): Target country of deployment\n- `salary` (string): Base wage in foreign currency (e.g. `1,800 SAR / month`)\n- `terms` (text, nullable): Detailed clauses on overtime, hours, housing, medical\n- `status` (enum: `draft`, `issued`, `verified`, `disputed`)\n- `contract_date` (date): Date of contract signing",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 83,
+            "keywords": [
+                "string",
+                "contracts",
+                "employment",
+                "foreign",
+                "able\ntores",
+                "legally",
+                "binding",
+                "agreements\n"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_3-documents-table_028",
+        "domain": "schema",
+        "title": "3. `documents` Table",
+        "text": "### 3. `documents` Table\nStores uploaded certificates and clearance files:\n- `id` (bigint, primary key)\n- `user_id` (foreign key -> `users.id`): Worker owner\n- `name` (string): Document title (e.g., `Passport copy`, `Medical fitness report`)\n- `type` (enum: `nid`, `passport`, `medical`, `training`, `police`, `visa`, `other`)\n- `file_path` (string): Server storage path\n- `status` (enum: `missing`, `pending`, `complete`, `verified`)",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 59,
+            "keywords": [
+                "documents",
+                "string",
+                "able\ntores",
+                "uploaded",
+                "certificates",
+                "clearance",
+                "files\n",
+                "bigint"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_4-payments-table_029",
+        "domain": "schema",
+        "title": "4. `payments` Table",
+        "text": "### 4. `payments` Table\nThe official Recruitment Cost Ledger:\n- `id` (bigint, primary key)\n- `user_id` (foreign key -> `users.id`): Paying worker\n- `agency_name` (string): Recipient agency or government department\n- `purpose` (string): Fee type (e.g., `BMET Smart Card`, `Agency Processing Fee`)\n- `amount` (decimal 10,2): Amount in BDT (৳)\n- `currency` (string, default: `BDT`)\n- `payment_method` (string): `SSLCommerz Gateway`, `bKash`, `Nagad`, `Bank Counter`\n- `transaction_id` (string, unique): Gateway or bank transaction reference\n- `status` (enum: `pending`, `completed`, `failed`, `cancelled`)\n- `payment_date` (date): Date of financial settlement\n- `notes` (text, nullable): Additional receipts or ledger notes",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 99,
+            "keywords": [
+                "string",
+                "payments",
+                "ateway",
+                "notes",
+                "able\nhe",
+                "official",
+                "ecruitment",
+                "edger\n"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_5-complaints-table_030",
+        "domain": "schema",
+        "title": "5. `complaints` Table",
+        "text": "### 5. `complaints` Table\nTracks formal grievances and BMET escalations:\n- `id` (bigint, primary key)\n- `user_id` (foreign key -> `users.id`): Complainant\n- `tracking_code` (string, unique): Tracking code (e.g. `CMP-2026-00128`)\n- `agency_name` (string): Accused agency or broker\n- `category` (string): Category (e.g. `Overcharging / Illegal Fees`, `Visa Fraud`)\n- `description` (text): Factual details of grievance\n- `status` (enum: `submitted`, `under_review`, `escalated_to_bmet`, `resolved`, `dismissed`)\n- `resolution_notes` (text, nullable): Official BMET or agency findings",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 80,
+            "keywords": [
+                "string",
+                "complaints",
+                "agency",
+                "able\nracks",
+                "formal",
+                "grievances",
+                "escalations\n",
+                "bigint"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_6-job-listings-table_031",
+        "domain": "schema",
+        "title": "6. `job_listings` Table",
+        "text": "### 6. `job_listings` Table\nStores certified overseas vacancies:\n- `id` (bigint, primary key)\n- `posted_by` (foreign key -> `users.id`): Agency publisher\n- `title` (string): Trade/Role (e.g., `Heavy Equipment Operator`)\n- `agency` (string): Agency business name\n- `country` (string): Destination country\n- `city` (string, nullable): Destination city\n- `salary` (string): Wage rate (e.g., `2,200 AED + Overtime`)\n- `criteria` (text): Skills, trade tests, age limit\n- `description` (text): Detailed job description\n- `verified` (boolean): Whether posted by an accredited agency",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 81,
+            "keywords": [
+                "string",
+                "joblistings",
+                "gency",
+                "agency",
+                "estination",
+                "able\ntores",
+                "certified",
+                "overseas"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_7-job-applications-table_032",
+        "domain": "schema",
+        "title": "7. `job_applications` Table",
+        "text": "### 7. `job_applications` Table\nTracks worker applications for circulars:\n- `id` (bigint, primary key)\n- `job_id` (foreign key -> `job_listings.id`)\n- `applicant_id` (foreign key -> `users.id`)\n- `status` (enum: `submitted`, `under_review`, `accepted`, `rejected`)\n- `notes` (text, nullable)",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 42,
+            "keywords": [
+                "jobapplications",
+                "foreign",
+                "able\nracks",
+                "worker",
+                "applications",
+                "circulars\n",
+                "bigint",
+                "primary"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_8-notifications-table_033",
+        "domain": "schema",
+        "title": "8. `notifications` Table",
+        "text": "### 8. `notifications` Table\nIn-app alerts and compliance notifications:\n- `id` (bigint, primary key)\n- `user_id` (foreign key -> `users.id`)\n- `title` (string): Alert headline\n- `detail` (text): Alert message\n- `level` (enum: `info`, `warning`, `success`, `error`)\n- `link` (string, nullable): Navigation target\n- `is_read` (boolean, default: false)\n\n---",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 50,
+            "keywords": [
+                "notifications",
+                "string",
+                "able\nnapp",
+                "alerts",
+                "compliance",
+                "notifications\n",
+                "bigint",
+                "primary"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_complete-rest-api-specificatio_034",
+        "domain": "api",
+        "title": "Complete REST API Specification",
+        "text": "## 13. Complete REST API Specification\n\n| Method | Endpoint | Access Level | Description |\n| :--- | :--- | :--- | :--- |\n| `POST` | `/api/register` | Public | Create new worker or agency account |\n| `POST` | `/api/login` | Public | Authenticate user and receive Bearer Token |\n| `GET` | `/api/me` | Authenticated | Retrieve current user profile and verification status |\n| `POST` | `/api/logout` | Authenticated | Invalidate active Sanctum session token |\n| `GET` | `/api/dashboard` | Authenticated | Fetch dynamic live dashboard state, journey stages, and notifications |\n| `GET` | `/api/contracts` | Authenticated | List all contracts associated with current user |\n| `POST` | `/api/contracts` | Agency Only | Issue new legal employment contract to candidate |\n| `GET` | `/api/documents` | Authenticated | List worker document vault files |\n| `POST` | `/api/documents` | Authenticated | Upload new document file for automated verification |\n| `GET` | `/api/payments` | Authenticated | Fetch complete recruitment cost ledger |\n| `POST` | `/api/payments` | Authenticated | Record manual payment or bank slip |\n| `POST` | `/api/payments/initiate-sslcommerz` | Authenticated | Initiate official SSLCommerz payment session |\n| `MATCH` | `/api/payments/sslcommerz/success` | Public Callback | SSLCommerz payment success redirect handler |\n| `MATCH` | `/api/payments/sslcommerz/fail` | Public Callback | SSLCommerz payment failure redirect handler |\n| `MATCH` | `/api/payments/sslcommerz/cancel` | Public Callback | SSLCommerz payment cancellation handler |\n| `POST` | `/api/payments/sslcommerz/ipn` | Public Webhook | SSLCommerz server-to-server IPN validator |\n| `GET` | `/api/complaints` | Authenticated | List complaints filed by current user |\n| `POST` | `/api/complaints` | Authenticated | File new formal grievance |\n| `POST` | `/api/complaints/{id}/escalate` | Authenticated | Escalate grievance directly to BMET Vigilance Cell |\n| `GET` | `/api/jobs` | Public | Browse certified overseas employment circulars |\n| `POST` | `/api/jobs/{id}/apply` | Worker Only | Submit application for certified job circular |\n| `POST` | `/api/ai/generate-job` | Agency Only | Parse natural language text into structured job listing draft |\n| `POST` | `/api/ai/auto-post-job` | Agency Only | Autonomously parse and publish job circular using Gemini AI |\n| `POST` | `/api/assistant/chat` | Public / Auth | Submit query to Guardrailed RAG AI Assistant |\n| `GET` | `/api/assistant/suggestions` | Public | Fetch dynamic contextual prompt suggestions |\n\n---",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 291,
+            "keywords": [
+                "uthenticated",
+                "ublic",
+                "payment",
+                "ommerz",
+                "current",
+                "gency",
+                "allback",
+                "handler"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_mongodb-collection-schema-du_035",
+        "domain": "schema",
+        "title": "MongoDB Collection Schema (`dunki_knowledge_chunks`)",
+        "text": "## 14. MongoDB Atlas Vector Search Ingestion & Schema\n\nTo ingest this document into MongoDB Atlas Vector Search for low-latency, semantically grounded retrieval:\n\n### MongoDB Collection Schema (`dunki_knowledge_chunks`)\n```json\n{\n  \"_id\": \"ObjectId('...')\",\n  \"chunk_id\": \"dunki_doc_contracts_001\",\n  \"domain\": \"contracts\",\n  \"title\": \"Migrant Worker Contract Rules & Policies\",\n  \"text\": \"CRITICAL POLICY: Migrant workers CANNOT create or add contracts on Dunki. Contracts are legally binding instruments...\",\n  \"embedding\": [0.0124, -0.0451, 0.0892, \"... 1536 or 768 dimensions ...\"],\n  \"metadata\": {\n    \"source\": \"DUNKI_PROJECT_KNOWLEDGE_BASE.md\",\n    \"roles\": [\"worker\", \"agency\"],\n    \"keywords\": [\"contract\", \"policy\", \"BMET\", \"hours\", \"overtime\", \"salary\"],\n    \"section\": \"Section 5: Contract Management\"\n  }\n}\n```",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 86,
+            "keywords": [
+                "ollection",
+                "chema",
+                "ector",
+                "earch",
+                "igrant",
+                "ontract",
+                "dunkiknowledgechunks",
+                "ngestion"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_mongodb-atlas-vector-search-in_036",
+        "domain": "schema",
+        "title": "MongoDB Atlas Vector Search Index Definition",
+        "text": "### MongoDB Atlas Vector Search Index Definition\nCreate a vector search index named `vector_index` on the `dunki_knowledge_chunks` collection:\n```json\n{\n  \"fields\": [\n    {\n      \"type\": \"vector\",\n      \"path\": \"embedding\",\n      \"numDimensions\": 1536,\n      \"similarity\": \"cosine\"\n    },\n    {\n      \"type\": \"filter\",\n      \"path\": \"domain\"\n    },\n    {\n      \"type\": \"filter\",\n      \"path\": \"metadata.roles\"\n    }\n  ]\n}\n```",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 38,
+            "keywords": [
+                "ector",
+                "earch",
+                "filter\n",
+                "efinition",
+                "efinition\nreate",
+                "vector",
+                "search",
+                "index"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_mongodb-vector-search-aggregat_037",
+        "domain": "schema",
+        "title": "MongoDB Vector Search Aggregation Pipeline",
+        "text": "### MongoDB Vector Search Aggregation Pipeline\n```javascript\nconst results = await db.collection(\"dunki_knowledge_chunks\").aggregate([\n  {\n    $vectorSearch: {\n      index: \"vector_index\",\n      path: \"embedding\",\n      queryVector: queryEmbedding,\n      numCandidates: 100,\n      limit: 3,\n      filter: {\n        domain: { $in: [\"contracts\", \"payments\", \"regulations\", \"general\"] }\n      }\n    }\n  },\n  {\n    $project: {\n      _id: 0,\n      chunk_id: 1,\n      title: 1,\n      text: 1,\n      score: { $meta: \"vectorSearchScore\" }\n    }\n  }\n]).toArray();\n```\n\n---",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 43,
+            "keywords": [
+                "ector",
+                "earch",
+                "ggregation",
+                "ipeline",
+                "ipeline\njavascript\nconst",
+                "results",
+                "await",
+                "dbcollectiondunkiknowledgechunksaggregate\n"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_q1-why-cant-a-migrant-worker_038",
+        "domain": "faq",
+        "title": "Q1: Why can't a migrant worker add or create a contract on Dunki?",
+        "text": "## 15. Grounded Frequently Asked Questions (FAQ)\n\n### Q1: Why can't a migrant worker add or create a contract on Dunki?\n**Answer:** Under BMET regulations and Bangladesh migration law, employment contracts are legally binding bilateral agreements that must strictly be issued by accredited recruiting agencies or foreign employers. Permitting workers to create contracts would allow unauthorized sub-agents (\"dalals\") to produce forged agreements. Workers can view contracts assigned to their Tracking ID, inspect wage and accommodation terms, and click \"Report Discrepancy\" if verbal promises differ from the digital agreement.",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 85,
+            "keywords": [
+                "create",
+                "contracts",
+                "migrant",
+                "worker",
+                "contract",
+                "agreements",
+                "rounded",
+                "requently"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_q3-what-payment-methods-are-s_039",
+        "domain": "faq",
+        "title": "Q3: What payment methods are supported for migration fee payments?",
+        "text": "### Q2: How does Dunki prevent agencies from overcharging migrant workers?\n**Answer:** Dunki implements the official BMET Statutory Legal Cost Ceilings (e.g., ৳1,65,000 for Saudi Arabia, ৳78,990 for Malaysia, ৳1,00,000 for Qatar, ৳1,07,700 for UAE). Every payment made online via SSLCommerz or recorded from bank deposit slips is logged in the worker's Recruitment Cost Ledger. If total payments exceed the destination cap, the platform automatically flags \"Fee Overcharge Detected\" and enables instant escalation to the BMET Vigilance Cell for license suspension and refund recovery under the Overseas Employment Act 2013.\n\n### Q3: What payment methods are supported for migration fee payments?\n**Answer:** Dunki integrates SSLCommerz, supporting bKash, Nagad, Rocket, Upay, Visa, Mastercard, AMEX, and internet banking from major Bangladeshi banks. Each payment receives an instant Bank Transaction ID (`DNK-SSL-XXXXXXXXXX`) and verifiable receipt.",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 126,
+            "keywords": [
+                "payment",
+                "methods",
+                "supported",
+                "migration",
+                "payments",
+                "ommerz",
+                "instant",
+                "prevent"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_q4-which-documents-must-be-up_040",
+        "domain": "faq",
+        "title": "Q4: Which documents must be uploaded to the Document Vault?",
+        "text": "### Q4: Which documents must be uploaded to the Document Vault?\n**Answer:** Five mandatory documents must be uploaded for government clearance:\n1. National ID (NID) Card\n2. International Passport (minimum 1 year validity)\n3. GAMCA Medical Fitness Certificate\n4. BMET 3-Day Pre-departure Training Certificate & Smart Card\n5. Police Clearance Certificate (issued within the last 6 months)",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 48,
+            "keywords": [
+                "documents",
+                "uploaded",
+                "ocument",
+                "ertificate",
+                "ault\nnswer",
+                "mandatory",
+                "government",
+                "clearance\n1"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_q6-what-should-a-worker-do-if_041",
+        "domain": "faq",
+        "title": "Q6: What should a worker do if their agency demands extra cash outside the platform?",
+        "text": "### Q5: How do agencies post jobs using the AI Job Assistant?\n**Answer:** Verified agencies can navigate to the AI Job Assistant, paste an unstructured circular or job notice, and the Gemini AI engine automatically extracts job title, country, city, foreign currency salary, requirements, and contract duration into a standardized circular.\n\n### Q6: What should a worker do if their agency demands extra cash outside the platform?\n**Answer:** The worker should never pay unrecorded cash to sub-agents. They can file a formal complaint under the \"Fee Overcharging / Extortion\" category on the Complaints page. If cash was already deposited into a bank account, the worker can upload the deposit slip to the Recruitment Cost Ledger as legal proof and escalate the complaint directly to BMET.",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 122,
+            "keywords": [
+                "worker",
+                "should",
+                "their",
+                "agency",
+                "demands",
+                "extra",
+                "outside",
+                "agencies"
+            ]
+        }
+    },
+    {
+        "chunk_id": "dunki_q7-what-are-the-emergency-hel_042",
+        "domain": "faq",
+        "title": "Q7: What are the emergency helpline numbers for distressed workers abroad?",
+        "text": "### Q7: What are the emergency helpline numbers for distressed workers abroad?\n**Answer:**\n- **BMET 24/7 Helpline:** `13355` / `+880-2-8300300`\n- **Wage Earners' Welfare Board (WEWB):** `16135`\n- **Dhaka Airport Expatriate Desk:** `+880-2-8901460`\n- **Bangladesh Embassy Riyadh (Saudi Arabia):** `+966-11-4195300`\n- **Bangladesh Consulate Jeddah:** `+966-12-6878465`\n- **Bangladesh Embassy Abu Dhabi (UAE):** `+971-2-4465100`\n- **Bangladesh Consulate Dubai:** `+971-4-2252484`\n- **Bangladesh Embassy Doha (Qatar):** `+974-44671988`\n- **Bangladesh High Commission Kuala Lumpur (Malaysia):** `+60-3-26919255`",
+        "metadata": {
+            "source": "DUNKI_PROJECT_KNOWLEDGE_BASE.md",
+            "word_count": 73,
+            "keywords": [
+                "angladesh",
+                "mbassy",
+                "emergency",
+                "helpline",
+                "numbers",
+                "distressed",
+                "workers",
+                "onsulate"
+            ]
+        }
+    }
+]

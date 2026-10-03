@@ -38,6 +38,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Contract::class);
     }
+    public function issuedContracts()
+    {
+        return $this->hasMany(Contract::class, 'agency_id');
+    }
     public function documents()
     {
         return $this->hasMany(Document::class);
@@ -50,5 +54,20 @@ class User extends Authenticatable
     public function applications()
     {
         return $this->hasMany(JobApplication::class, 'applicant_id');
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    public function complaints()
+    {
+        return $this->hasMany(Complaint::class);
+    }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
     }
 }
