@@ -17,6 +17,25 @@ use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+// Health check with the deployed commit SHA (written to REVISION by the CI/CD pipeline)
+Route::get('/health', function () {
+    try {
+        \Illuminate\Support\Facades\DB::select('select 1');
+        $database = 'ok';
+    } catch (\Throwable $e) {
+        $database = 'error';
+    }
+
+    $revision = base_path('REVISION');
+
+    return response()->json([
+        'status' => $database === 'ok' ? 'ok' : 'degraded',
+        'database' => $database,
+        'commit' => is_file($revision) ? trim(file_get_contents($revision)) : 'unknown',
+        'time' => now()->toIso8601String(),
+    ]);
+});
+
 // Public authentication routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);

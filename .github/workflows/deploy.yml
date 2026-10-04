@@ -47,6 +47,7 @@ jobs:
       - name: Pack the release
         working-directory: Dunki/backend
         run: |
+          echo "$GITHUB_SHA" > REVISION
           tar -czf ../../release.tar.gz \
             --exclude='./.git' --exclude='./node_modules' --exclude='./.env' --exclude='./.env.*' \
             --exclude='./storage/logs/*' --exclude='./tests' --exclude='./Dockerfile' \
