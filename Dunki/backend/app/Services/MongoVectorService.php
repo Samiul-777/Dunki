@@ -63,7 +63,7 @@ class MongoVectorService
                 $this->client = new MongoClient($this->uri, [], [
                     'serverSelectionTimeoutMS' => 3000,
                 ]);
-            } catch (Throwable $e) {
+            } catch (\Throwable $e) {
                 Log::warning('MongoDB Client initialization failed: ' . $e->getMessage());
                 return null;
             }
