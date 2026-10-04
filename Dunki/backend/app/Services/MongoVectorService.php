@@ -32,6 +32,11 @@ class MongoVectorService
      */
     public function isConfigured(): bool
     {
+        // The PHP mongodb extension is optional; without it, fall back to local knowledge.
+        if (!extension_loaded('mongodb')) {
+            return false;
+        }
+
         if (empty($this->uri)) {
             return false;
         }
@@ -58,7 +63,7 @@ class MongoVectorService
                 $this->client = new MongoClient($this->uri, [], [
                     'serverSelectionTimeoutMS' => 3000,
                 ]);
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 Log::warning('MongoDB Client initialization failed: ' . $e->getMessage());
                 return null;
             }
